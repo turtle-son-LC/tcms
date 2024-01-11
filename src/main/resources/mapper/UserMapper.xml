@@ -2,14 +2,23 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!-- namespace:改mapper.xml映射文件的唯一标识并且必须和数据处理层的接口的路径相同-->
-<mapper namespace="com.cn.tcms.mapper.UserMapper">
-    <!--   必须添加property属性 ，区别于是否加主键-->
-    <resultMap id="user" type="com.cn.tcms.domain.User">
+<mapper namespace="org.edu.tcms.mapper.UserMapper">
+    <resultMap id="user" type="org.edu.tcms.domain.User">
     </resultMap>
-    <!--id的值必须和数据处理层的接口名一致-->
-    <!--此处的User-->
-    <select id="queryAllUser" resultMap="user">
+
+    <select id="queryAll" resultMap="user">
         select * from tcms_user
+        <if test="account != null">
+            where account like concat("%", #{account},"%")
+        </if>
     </select>
+
+    <select id="queryByAccount" resultMap="user">
+        select * from tcms_user where account = #{account}
+    </select>
+
+    <insert id="createNew" parameterType="org.edu.tcms.domain.User">
+        insert into tcms_user(user_id, account, user_name, password, title, phone_num, email, deleted, create_time)
+        values(#{userId}, #{account}, #{userName}, #{password}, #{title}, #{phoneNum}, #{email}, #{deleted}, #{createTime})
+    </insert>
 </mapper>

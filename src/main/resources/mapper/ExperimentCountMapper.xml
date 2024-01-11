@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.edu.tcms.mapper.ExperimentCountMapper">
+    <resultMap id="experimentCount" type="org.edu.tcms.domain.ExperimentCount">
+    </resultMap>
+
+    <select id="queryAll" resultMap="experimentCount">
+        select * from tcms_experiment_count
+    </select>
+
+    <insert id="createNew" parameterType="org.edu.tcms.domain.ExperimentCount">
+        insert into tcms_experiment_count(id, view_count, ongoing_count, finish_count)
+        values (#{id}, #{viewCount}, #{ongoingCount}, #{finishCount})
+    </insert>
+
+    <update id="updateViewCount">
+        update tcms_experiment_count set view_count=#{viewCount} where id=#{id}
+    </update>
+
+    <update id="updateOngoingCount">
+        update tcms_experiment_count set ongoing_count=#{ongoingCount} where id=#{id}
+    </update>
+
+    <update id="updateFinishCount">
+        update tcms_experiment_count set finish_count=#{finishCount} where id=#{id}
+    </update>
+
+</mapper>
