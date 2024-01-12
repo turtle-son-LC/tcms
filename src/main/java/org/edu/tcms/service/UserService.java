@@ -4,13 +4,14 @@ import jakarta.annotation.Resource;
 import org.edu.tcms.domain.ResultResponse;
 import org.edu.tcms.domain.User;
 import org.edu.tcms.domain.UserRegisterRequest;
+import org.edu.tcms.domain.UserResponse;
 import org.edu.tcms.mapper.UserMapper;
 import org.edu.tcms.utls.UUIDUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -93,6 +94,9 @@ public class UserService {
             return ResultResponse.badRequest("账号密码不匹配.");
         }
 
-        return ResultResponse.success(dbUser);
+        UserResponse response = new UserResponse();
+        BeanUtils.copyProperties(dbUser, response);
+
+        return ResultResponse.success(response);
     }
 }

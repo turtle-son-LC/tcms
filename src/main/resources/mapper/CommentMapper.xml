@@ -8,6 +8,34 @@
     </resultMap>
 
     <select id="queryAll" resultMap="comment">
-        select * from tcms_comment
+        select comment_id, content, user_id, reply_to, root_comment_id, deleted, create_time from tcms_comment
+    </select>
+
+    <insert id="createNew" parameterType="org.edu.tcms.domain.Comment">
+        insert into tcms_comment(comment_id, content, user_id, reply_to, root_comment_id, deleted, create_time)
+        values(#{commentId}, #{content}, #{userId}, #{replyTo}, #{rootCommentId}, #{deleted}, #{createTime})
+    </insert>
+
+    <select id="queryCommentCount" resultType="Integer">
+        select count(*)
+        from tcms_comment
+        where reply_to is null or reply_to = ''
+    </select>
+
+    <select id="queryPageList" resultMap="comment">
+        select comment_id, content, user_id, reply_to, root_comment_id, deleted, create_time
+        from tcms_comment
+        where reply_to is null or reply_to = ''
+        order by create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="queryByRootId" resultMap="comment">
+        select comment_id, content, user_id, reply_to, root_comment_id, deleted, create_time
+        from tcms_comment
+        where root_comment_id IN
+        <foreach item="rootId" collection="rootCommentIds" open="(" separator="," close=")">
+            #{rootId}
+        </foreach>
     </select>
 </mapper>

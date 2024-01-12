@@ -21,4 +21,14 @@
         insert into tcms_user(user_id, account, user_name, password, title, phone_num, email, deleted, create_time)
         values(#{userId}, #{account}, #{userName}, #{password}, #{title}, #{phoneNum}, #{email}, #{deleted}, #{createTime})
     </insert>
+
+    <select id="queryByIds" resultMap="user">
+        select user_id, account, user_name, password, title, phone_num, email, deleted, create_time
+        from tcms_user
+        where user_id IN
+        <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+
 </mapper>
