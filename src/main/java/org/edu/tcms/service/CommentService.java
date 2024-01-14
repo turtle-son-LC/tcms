@@ -1,6 +1,5 @@
 package org.edu.tcms.service;
 
-import jakarta.annotation.Resource;
 import org.edu.tcms.domain.*;
 import org.edu.tcms.mapper.CommentMapper;
 import org.edu.tcms.mapper.UserMapper;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,7 +31,10 @@ public class CommentService {
             return ResultResponse.badRequest("userId不能为空.");
         }
         if (!StringUtils.hasLength(createRequest.getContent())) {
-            return ResultResponse.badRequest("评论内容能为空.");
+            return ResultResponse.badRequest("评论内容不能为空.");
+        }
+        if (createRequest.getContent().length() > 2000) {
+            return ResultResponse.badRequest("评论长度不能超过2000.");
         }
         if (StringUtils.hasLength(createRequest.getReplyTo())) {
             if (!StringUtils.hasLength(createRequest.getRootCommentId())) {
@@ -61,7 +64,7 @@ public class CommentService {
 
     public ResultResponse queryPageList(Integer pageNo, Integer pageSize) {
         List<Comment> dataList = commentMapper.queryPageList(pageSize, (pageNo - 1) * pageSize);
-        List<String> userIds = dataList.stream().map(Comment::getUserId).toList();
+        List<String> userIds = dataList.stream().map(Comment::getUserId).collect(Collectors.toList());
         List<User> users = new ArrayList<>();
         if (!CollectionUtils.isEmpty(userIds)) {
             users = userMapper.queryByIds(userIds);
@@ -70,11 +73,11 @@ public class CommentService {
         List<CommentResponse> pageList = convert(dataList, users);
 
         List<String> rootCommentIds = dataList.stream().map(Comment::getCommentId)
-                .filter(StringUtils::hasLength).toList();
+                .filter(StringUtils::hasLength).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(rootCommentIds)) {
             List<Comment> replyComments = commentMapper.queryByRootId(rootCommentIds);
             if (!CollectionUtils.isEmpty(replyComments)) {
-                List<String> replyUserIds = replyComments.stream().map(Comment::getUserId).filter(userId -> !userIds.contains(userId)).toList();
+                List<String> replyUserIds = replyComments.stream().map(Comment::getUserId).filter(userId -> !userIds.contains(userId)).collect(Collectors.toList());
                 if (!CollectionUtils.isEmpty(replyUserIds)) {
                     List<User> replyUsers = userMapper.queryByIds(replyUserIds);
                     users.addAll(replyUsers);
@@ -114,7 +117,7 @@ public class CommentService {
 
     private List<CommentResponse> buildReplyComments(CommentResponse parentResponse, List<Comment> replyComments, List<User> users) {
         List<Comment> childComments = replyComments.stream().filter(n -> parentResponse.getCommentId()
-                .equals(n.getReplyTo())).toList();
+                .equals(n.getReplyTo())).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(childComments)) {
             List<CommentResponse> childResponses = convert(childComments, users);
 

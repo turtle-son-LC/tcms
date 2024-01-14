@@ -1,12 +1,12 @@
 package org.edu.tcms.service;
 
-import jakarta.annotation.Resource;
 import org.edu.tcms.domain.ExperimentCount;
 import org.edu.tcms.mapper.ExperimentCountMapper;
 import org.edu.tcms.utls.UUIDUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service

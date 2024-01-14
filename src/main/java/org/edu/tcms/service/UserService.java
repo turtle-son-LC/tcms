@@ -1,6 +1,5 @@
 package org.edu.tcms.service;
 
-import jakarta.annotation.Resource;
 import org.edu.tcms.domain.ResultResponse;
 import org.edu.tcms.domain.User;
 import org.edu.tcms.domain.UserRegisterRequest;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
@@ -86,8 +86,8 @@ public class UserService {
             return ResultResponse.badRequest("密码不能为空.");
         }
         List<User> users = userMapper.queryByAccount(account);
-        if (CollectionUtils.isEmpty(users) || users.size() != 1) {
-            throw new RuntimeException("后台数据异常.");
+        if (CollectionUtils.isEmpty(users)) {
+            return ResultResponse.badRequest("登录用户不存在.");
         }
         User dbUser = users.get(0);
         if (!password.equals(dbUser.getPassword())) {
